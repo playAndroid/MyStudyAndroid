@@ -2,17 +2,20 @@ package com.mystudy.myzoomimageview.view;
 
 import android.content.Context;
 import android.graphics.Matrix;
+import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
+import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
-
-import java.util.regex.Matcher;
 
 /**
  * Created by Administrator on 2016/5/25.
  */
-public class MyZommImageView extends ImageView implements ViewTreeObserver.OnGlobalLayoutListener {
+public class MyZommImageView extends ImageView implements ViewTreeObserver.OnGlobalLayoutListener, ScaleGestureDetector.OnScaleGestureListener
+        , View.OnTouchListener {
     private boolean mOnce;
 
     /**
@@ -28,7 +31,15 @@ public class MyZommImageView extends ImageView implements ViewTreeObserver.OnGlo
      */
     private float mMaxScale;
 
+    /**
+     * 矩阵
+     */
     private Matrix mScaleMatrix;
+
+    /**
+     * 手势缩放捕获,捕获用户多指触控时的比例,判断用户想要放大还是缩小
+     */
+    private ScaleGestureDetector gestureDetector;
 
     public MyZommImageView(Context context) {
         this(context, null);
@@ -42,6 +53,8 @@ public class MyZommImageView extends ImageView implements ViewTreeObserver.OnGlo
         super(context, attrs, defStyleAttr);
         mScaleMatrix = new Matrix();
         setScaleType(ScaleType.MATRIX);
+        gestureDetector = new ScaleGestureDetector(context, this);
+        setOnTouchListener(this);
     }
 
     @Override
@@ -112,5 +125,111 @@ public class MyZommImageView extends ImageView implements ViewTreeObserver.OnGlo
         }
 
 
+    }
+
+    private float getScale() {
+        float[] values = new float[9];
+        mScaleMatrix.getValues(values);
+        return values[Matrix.MSCALE_X];
+    }
+
+    @Override
+    public boolean onScale(ScaleGestureDetector detector) {
+        float scale = getScale();
+        float scaleFactor = detector.getScaleFactor();//拿到缩放值
+        //缩放范围  大于最小的 还想缩小  小于最大的 且还想 放大
+
+
+        Drawable d = getDrawable();
+        if (d == null) {
+            return false;
+        }
+        if ((scale > mInitScale && scaleFactor < 1.0f) || (scale < mMaxScale && scaleFactor > 1.0f)) {
+            //想缩特别小的时候设置为最小值
+            if (scale * scaleFactor < mInitScale) {
+                scaleFactor = mInitScale / scale;
+            }
+            if (scale * scaleFactor > mMaxScale) {
+                scaleFactor = mMaxScale / scale;
+            }
+            //缩放  以屏幕中心为中心点
+//            mScaleMatrix.postScale(scaleFactor, scaleFactor, getWidth() / 2, getHeight() / 2);
+            //以手势的缩放点为中心
+            mScaleMatrix.postScale(scaleFactor, scaleFactor, detector.getFocusX(), detector.getFocusY());
+            checkBorderAndCenterWhenScale();
+            setImageMatrix(mScaleMatrix);
+        }
+        return true;
+    }
+
+
+    private RectF getMatrixRectf() {
+        Matrix matrix = mScaleMatrix;
+        RectF rectF = new RectF();
+        Drawable drawable = getDrawable();
+        //获取图片的矩形宽高 和 l,t,r,b
+        if (drawable != null) {
+            rectF.set(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+            matrix.mapRect(rectF);
+        }
+        return rectF;
+    }
+
+    /**
+     * 控制图片边界以及内容边界
+     */
+    private void checkBorderAndCenterWhenScale() {
+        RectF matrixRectf = getMatrixRectf();
+        float dx = 0;
+        float dy = 0;
+
+        int width = getWidth();
+        int height = getHeight();
+
+        //缩放时 进行边界控制 防止出现白边
+        if (matrixRectf.width() >= width) {
+            if (matrixRectf.left > 0) {
+                dx = -matrixRectf.left;
+            }
+            if (matrixRectf.right < width) {
+                dx = width - matrixRectf.right;
+            }
+        }
+
+        if (matrixRectf.height() >= height) {
+            if (matrixRectf.top > 0) {
+                dy = -matrixRectf.top;
+            }
+            if (matrixRectf.bottom < height) {
+                dy = height - matrixRectf.bottom;
+            }
+        }
+
+        //如果宽度或者高度小于控件的宽或者高 让其居中
+
+        if (matrixRectf.width() < width) {
+            dx = width / 2f - matrixRectf.right + matrixRectf.width() / 2f;
+        }
+
+        if (matrixRectf.height() < height) {
+            dy = height / 2f - matrixRectf.bottom + matrixRectf.height() / 2f;
+        }
+        mScaleMatrix.postTranslate(dx, dy);
+    }
+
+    @Override
+    public boolean onScaleBegin(ScaleGestureDetector detector) {
+        return true;
+    }
+
+    @Override
+    public void onScaleEnd(ScaleGestureDetector detector) {
+
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        gestureDetector.onTouchEvent(event);
+        return true;
     }
 }
