@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
@@ -41,6 +42,29 @@ public class MyZommImageView extends ImageView implements ViewTreeObserver.OnGlo
      */
     private ScaleGestureDetector gestureDetector;
 
+    //------------
+
+    /**
+     * 记录手指触摸的点的数量
+     */
+    private int mLastPointerCount;
+
+    /**
+     * 最后的x y 值
+     *
+     * @param context
+     */
+    private int mLastX, mLastY;
+
+    /**
+     * 触控溢出的值
+     */
+    private int mTouchSlop;
+    /**
+     * 是否可以拖拽
+     */
+    private boolean isCanDrag;
+
     public MyZommImageView(Context context) {
         this(context, null);
     }
@@ -55,6 +79,7 @@ public class MyZommImageView extends ImageView implements ViewTreeObserver.OnGlo
         setScaleType(ScaleType.MATRIX);
         gestureDetector = new ScaleGestureDetector(context, this);
         setOnTouchListener(this);
+        mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
     }
 
     @Override
@@ -230,6 +255,65 @@ public class MyZommImageView extends ImageView implements ViewTreeObserver.OnGlo
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         gestureDetector.onTouchEvent(event);
+
+        int pointerCount = event.getPointerCount();
+        int x = 0;
+        int y = 0;
+        for (int i = 0; i < pointerCount; i++) {
+            x += event.getX(i);
+            y += event.getY(i);
+        }
+
+        x /= pointerCount;
+        y /= pointerCount;
+
+        if (mLastPointerCount != pointerCount) {
+            mLastX = x;
+            mLastY = y;
+            isCanDrag = false; //手指发生改变 重新进行判断
+        }
+
+        mLastPointerCount = pointerCount;
+
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_MOVE:
+                int dx = x - mLastX;
+                int dy = y - mLastY;
+                if (!isCanDrag) {
+                    isCanDrag = isMoveAction(dx, dy);
+                }
+                if (isCanDrag) {
+
+                    RectF rectF = getMatrixRectf();
+                    if (getDrawable() != null) {
+                        //如果 图片的宽度 或高度 小于控件的宽度和高度 完全显示的情况下 不需要进行移动
+                        if (rectF.width() < getWidth()) {
+                            dx = 0;
+                        }
+                        if (rectF.height() < getHeight()) {
+                            dy = 0;
+                        }
+                        mScaleMatrix.postTranslate(dx, dy);
+
+                        setImageMatrix(mScaleMatrix);
+                    }
+                    mLastX = x;
+                    mLastY = y;
+
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                mLastPointerCount = 0;
+                break;
+        }
+
         return true;
+    }
+
+    private boolean isMoveAction(int dx, int dy) {
+
+
+        return Math.sqrt(dx * dx + dy * dy) > mTouchSlop;
     }
 }
