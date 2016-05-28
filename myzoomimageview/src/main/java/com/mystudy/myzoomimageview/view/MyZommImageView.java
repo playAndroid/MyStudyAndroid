@@ -5,6 +5,7 @@ import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -65,6 +66,22 @@ public class MyZommImageView extends ImageView implements ViewTreeObserver.OnGlo
      */
     private boolean isCanDrag;
 
+    /**
+     * 是否进行上下,  左右 边界检测
+     *
+     * @param context
+     */
+    private boolean isLeftAndRightCheck, isTopAndBottom;
+
+    /**
+     * 双击缩放
+     *
+     * @param context
+     */
+
+    private GestureDetector mGestureDetector;
+    boolean isAutoScale;
+
     public MyZommImageView(Context context) {
         this(context, null);
     }
@@ -80,6 +97,34 @@ public class MyZommImageView extends ImageView implements ViewTreeObserver.OnGlo
         gestureDetector = new ScaleGestureDetector(context, this);
         setOnTouchListener(this);
         mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
+        mGestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+            /**
+             * 双击回调
+             * @param e
+             * @return
+             */
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+
+                float x = e.getX();
+                float y = e.getY();
+
+                if (isAutoScale) return true;
+                if (getScale() < mMidScale) {
+//                    mScaleMatrix.postScale(mMidScale / getScale(), mMidScale / getScale(), x, y);
+                    postDelayed(new AutoScaleRunnable(mMidScale, x, y), 16);
+                    isAutoScale = true;
+                } else {
+//                    mScaleMatrix.postScale(mInitScale / getScale(), mInitScale / getScale(), x, y);
+                    postDelayed(new AutoScaleRunnable(mInitScale, x, y), 16);
+                    isAutoScale = true;
+                }
+//                checkBorderAndCenterWhenScale();
+//                setImageMatrix(mScaleMatrix);
+
+                return true;
+            }
+        });
     }
 
     @Override
@@ -254,6 +299,11 @@ public class MyZommImageView extends ImageView implements ViewTreeObserver.OnGlo
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
+        /**
+         * 接管双击
+         */
+        if (mGestureDetector.onTouchEvent(event)) return true;
+
         gestureDetector.onTouchEvent(event);
 
         int pointerCount = event.getPointerCount();
@@ -279,22 +329,25 @@ public class MyZommImageView extends ImageView implements ViewTreeObserver.OnGlo
             case MotionEvent.ACTION_MOVE:
                 int dx = x - mLastX;
                 int dy = y - mLastY;
+
                 if (!isCanDrag) {
                     isCanDrag = isMoveAction(dx, dy);
                 }
                 if (isCanDrag) {
-
                     RectF rectF = getMatrixRectf();
                     if (getDrawable() != null) {
                         //如果 图片的宽度 或高度 小于控件的宽度和高度 完全显示的情况下 不需要进行移动
+                        isLeftAndRightCheck = isTopAndBottom = true;
                         if (rectF.width() < getWidth()) {
                             dx = 0;
+                            isLeftAndRightCheck = false;
                         }
                         if (rectF.height() < getHeight()) {
                             dy = 0;
+                            isTopAndBottom = false;
                         }
                         mScaleMatrix.postTranslate(dx, dy);
-
+                        checkBorderAndCenterWhenDrag();
                         setImageMatrix(mScaleMatrix);
                     }
                     mLastX = x;
@@ -311,9 +364,89 @@ public class MyZommImageView extends ImageView implements ViewTreeObserver.OnGlo
         return true;
     }
 
+    /**
+     * 移动时 进行边界检测
+     */
+    private void checkBorderAndCenterWhenDrag() {
+        RectF rectF = getMatrixRectf();
+        float dx = 0;
+        float dy = 0;
+
+        int width = getWidth();
+        int heigth = getHeight();
+        /**
+         * 如果边界 小于控件边界且可进行检测时 进行相应的移动
+         */
+        if (rectF.left > 0 && isLeftAndRightCheck) {
+            dx = -rectF.left;
+        }
+        if (rectF.right < width && isLeftAndRightCheck) {
+            dx = width - rectF.right;
+        }
+
+        if (rectF.top > 0 && isTopAndBottom) {
+            dy = -rectF.top;
+        }
+
+        if (rectF.bottom < heigth && isTopAndBottom) {
+            dy = heigth - rectF.bottom;
+        }
+
+        mScaleMatrix.postTranslate(dx, dy);
+    }
+
     private boolean isMoveAction(int dx, int dy) {
 
 
+        /**
+         * 返回平方根 double
+         */
         return Math.sqrt(dx * dx + dy * dy) > mTouchSlop;
+    }
+
+    class AutoScaleRunnable implements Runnable {
+        /**
+         * 目标缩放值
+         */
+        private float tagScale;
+        /**
+         * 缩放中心点
+         */
+        private float x;
+        private float y;
+
+        private final float BIGSCALE = 1.09f;
+        private final float SMALLSCALE = 0.93f;
+        private float tmpScale;
+
+        public AutoScaleRunnable(float tagScale, float x, float y) {
+            this.tagScale = tagScale;
+            this.x = x;
+            this.y = y;
+            if (getScale() < tagScale) {
+                tmpScale = BIGSCALE;
+            }
+            if (getScale() > tagScale) {
+                tmpScale = SMALLSCALE;
+            }
+        }
+
+        @Override
+        public void run() {
+            mScaleMatrix.postScale(tmpScale, tmpScale, x, y);
+            checkBorderAndCenterWhenScale();
+            setImageMatrix(mScaleMatrix);
+            float currentScale = getScale();
+            if ((tmpScale > 1.0f && currentScale < tagScale) || (tmpScale < 1.0f && currentScale > tagScale)) {
+                postDelayed(this, 16);
+            } else {
+                //设置为目标
+                float sale = tagScale / currentScale;
+                mScaleMatrix.postScale(sale, sale, x, y);
+                checkBorderAndCenterWhenScale();
+                setImageMatrix(mScaleMatrix);
+                isAutoScale = false;
+            }
+        }
     }
 }
