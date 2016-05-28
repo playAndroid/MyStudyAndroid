@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -119,9 +120,6 @@ public class MyZommImageView extends ImageView implements ViewTreeObserver.OnGlo
                     postDelayed(new AutoScaleRunnable(mInitScale, x, y), 16);
                     isAutoScale = true;
                 }
-//                checkBorderAndCenterWhenScale();
-//                setImageMatrix(mScaleMatrix);
-
                 return true;
             }
         });
@@ -326,7 +324,20 @@ public class MyZommImageView extends ImageView implements ViewTreeObserver.OnGlo
         mLastPointerCount = pointerCount;
 
         switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                /**
+                 * 如果图片的宽高 大于控件的宽高 请求父控件不要拦截触摸事件
+                 */
+                if (getMatrixRectf().width() > getWidth() + 0.01 || getMatrixRectf().height() > getHeight() + 0.01) {
+                    if (getParent() instanceof ViewPager)
+                        getParent().requestDisallowInterceptTouchEvent(true);
+                }
+                break;
             case MotionEvent.ACTION_MOVE:
+                if (getMatrixRectf().width() > getWidth() + 0.01 || getMatrixRectf().height() > getHeight() + 0.01) {
+                    if (getParent() instanceof ViewPager)
+                        getParent().requestDisallowInterceptTouchEvent(true);
+                }
                 int dx = x - mLastX;
                 int dy = y - mLastY;
 

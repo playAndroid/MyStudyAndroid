@@ -5,8 +5,8 @@
     android:layout_height="match_parent"
     tools:context="com.mystudy.myzoomimageview.MainActivity">
 
-    <com.mystudy.myzoomimageview.view.MyZommImageView
+    <android.support.v4.view.ViewPager
+        android:id="@+id/vp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/splash0" />
+        android:layout_height="match_parent" />
 </RelativeLayout>
