@@ -80,7 +80,16 @@ public class MyZommImageView extends ImageView implements ViewTreeObserver.OnGlo
      * @param context
      */
     private GestureDetector mGestureDetector;
+    /**
+     * 是否自动缩放
+     */
     boolean isAutoScale;
+
+    /**
+     * 是否可以缩放
+     */
+    private boolean isCanScale = true;
+
 
     public MyZommImageView(Context context) {
         this(context, null);
@@ -105,7 +114,7 @@ public class MyZommImageView extends ImageView implements ViewTreeObserver.OnGlo
              */
             @Override
             public boolean onDoubleTap(MotionEvent e) {
-
+                if(!isCanScale) return false;
                 float x = e.getX();
                 float y = e.getY();
 
@@ -198,6 +207,14 @@ public class MyZommImageView extends ImageView implements ViewTreeObserver.OnGlo
         float[] values = new float[9];
         mScaleMatrix.getValues(values);
         return values[Matrix.MSCALE_X];
+    }
+
+    public void setCanScale(boolean canScale) {
+        isCanScale = canScale;
+    }
+
+    public boolean isCanScale() {
+        return isCanScale;
     }
 
     @Override
@@ -296,6 +313,7 @@ public class MyZommImageView extends ImageView implements ViewTreeObserver.OnGlo
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
+        if (!isCanScale) return false;
         /**
          * 接管双击
          */

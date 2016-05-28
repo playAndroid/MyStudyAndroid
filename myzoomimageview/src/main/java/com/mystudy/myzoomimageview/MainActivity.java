@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public Object instantiateItem(ViewGroup container, int position) {
                 MyZommImageView myZommImageView = new MyZommImageView(MainActivity.this);
+                myZommImageView.setCanScale(false);
                 myZommImageView.setImageResource(images[position]);
                 container.addView(myZommImageView);
                 imageViews[position] = myZommImageView;
