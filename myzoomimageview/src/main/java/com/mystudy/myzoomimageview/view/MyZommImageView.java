@@ -79,7 +79,6 @@ public class MyZommImageView extends ImageView implements ViewTreeObserver.OnGlo
      *
      * @param context
      */
-
     private GestureDetector mGestureDetector;
     boolean isAutoScale;
 
