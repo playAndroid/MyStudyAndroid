@@ -9,4 +9,9 @@
         android:id="@+id/vp"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+    <!--<com.mystudy.myzoomimageview.view.MyZommImageView-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content" -->
+    <!--android:scaleType="matrix"-->
+    <!--/>-->
 </RelativeLayout>

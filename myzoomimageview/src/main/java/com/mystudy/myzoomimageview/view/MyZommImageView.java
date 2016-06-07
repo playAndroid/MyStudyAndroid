@@ -17,7 +17,8 @@ import android.widget.ImageView;
 /**
  * Created by Administrator on 2016/5/25.
  */
-public class MyZommImageView extends ImageView implements ViewTreeObserver.OnGlobalLayoutListener, ScaleGestureDetector.OnScaleGestureListener
+public class MyZommImageView extends ImageView implements ViewTreeObserver.OnGlobalLayoutListener
+        , ScaleGestureDetector.OnScaleGestureListener
         , View.OnTouchListener {
     private boolean mOnce;
 
@@ -114,7 +115,7 @@ public class MyZommImageView extends ImageView implements ViewTreeObserver.OnGlo
              */
             @Override
             public boolean onDoubleTap(MotionEvent e) {
-                if(!isCanScale) return false;
+                if (!isCanScale) return false;
                 float x = e.getX();
                 float y = e.getY();
 

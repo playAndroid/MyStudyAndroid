@@ -20,4 +20,3 @@
 > 
 > [CSDN博客: Android 手势检测实战 打造支持缩放平移的图片预览效果](http://blog.csdn.net/lmj623565791/article/details/39474553)
 
-
