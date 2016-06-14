@@ -1,1 +1,2 @@
 include ':app', ':myzoomimageview', ':wechattabandui'
+include ':badgeView'

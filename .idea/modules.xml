@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/MyStudyAndroid.iml" filepath="$PROJECT_DIR$/MyStudyAndroid.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/badgeView/badgeView.iml" filepath="$PROJECT_DIR$/badgeView/badgeView.iml" />
       <module fileurl="file://$PROJECT_DIR$/myzoomimageview/myzoomimageview.iml" filepath="$PROJECT_DIR$/myzoomimageview/myzoomimageview.iml" />
       <module fileurl="file://$PROJECT_DIR$/wechattabandui/wechattabandui.iml" filepath="$PROJECT_DIR$/wechattabandui/wechattabandui.iml" />
     </modules>

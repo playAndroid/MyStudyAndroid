@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet config="main"><source path="G:\MyStudyAndroid\badgeView\src\main\assets"/><source path="G:\MyStudyAndroid\badgeView\build\generated\assets\shaders\debug"/></dataSet><dataSet config="debug"><source path="G:\MyStudyAndroid\badgeView\src\debug\assets"/></dataSet></merger>

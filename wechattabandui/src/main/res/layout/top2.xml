@@ -12,12 +12,15 @@
         android:orientation="horizontal">
 
         <LinearLayout
+            android:id="@+id/id_ll_chat"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/id_tv_chat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="聊天"
@@ -26,12 +29,15 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/id_ll_find"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/id_tv_find"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="发现"
@@ -40,12 +46,15 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/id_ll_contact"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/id_tv_contact"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="通讯录"
@@ -55,6 +64,7 @@
     </LinearLayout>
 
     <ImageView
+        android:id="@+id/id_iv_line"
         android:layout_width="100dp"
         android:layout_height="3dp"
         android:background="@drawable/tabline" />
