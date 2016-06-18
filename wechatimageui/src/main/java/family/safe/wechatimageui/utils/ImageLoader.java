@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.LruCache;
+import android.widget.ImageView;
 
 import java.util.LinkedList;
 import java.util.concurrent.Executor;
@@ -76,7 +77,7 @@ public class ImageLoader {
                 Looper.loop();
             }
         };
-
+        mPoolThread.start();
         /**
          * 获得应用最大可用内存
          */
@@ -105,4 +106,52 @@ public class ImageLoader {
         return mInstance;
     }
 
+    /**
+     * 根据path 设置图片
+     *
+     * @param path
+     * @param imageView
+     */
+    public void loadImage(String path, ImageView imageView) {
+        imageView.setTag(path);//给ImageVIew设置tag 防止图片混乱
+        if (mUIHandler == null) {
+            mUIHandler = new Handler() {
+                @Override
+                public void handleMessage(Message msg) {
+                    //获取得到图片,为ImageView回调设置图片
+                    ImageBeanHolder holder = (ImageBeanHolder) msg.obj;
+                    ImageView imageView = holder.imageView;
+                    Bitmap bm = holder.bitmap;
+                    String path = holder.path;
+                    if (imageView.getTag().toString().equals(path)) {
+                        imageView.setImageBitmap(bm);
+                    }
+                }
+            };
+        }
+        //根据path从缓存中取出bitmap
+        Bitmap bm = getBitmapFromLruCache(path);
+        if (bm != null) {
+            Message message = Message.obtain();
+            ImageBeanHolder imageBeanHolder = new ImageBeanHolder();
+            imageBeanHolder.bitmap = bm;
+            imageBeanHolder.imageView = imageView;
+            imageBeanHolder.path = path;
+            message.obj = imageBeanHolder;
+            mUIHandler.sendMessage(message);
+        }else{
+            //如果没有 就加入任务队列
+        }
+    }
+
+    private Bitmap getBitmapFromLruCache(String key) {
+
+        return mLruCache.get(key);
+    }
+
+    private class ImageBeanHolder {
+        Bitmap bitmap;
+        String path;
+        ImageView imageView;
+    }
 }
