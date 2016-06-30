@@ -2,22 +2,15 @@ package family.safe.wechatimageui;
 
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.GridView;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,8 +23,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import family.safe.wechatimageui.adapter.ImageAdapter;
 import family.safe.wechatimageui.bean.FolderBean;
-import family.safe.wechatimageui.utils.ImageLoader;
 
 /**
  * 仿微信图片相册选择器
@@ -115,14 +108,11 @@ public class MainActivity extends AppCompatActivity {
                 Set<String> mDirPaths = new HashSet<String>();
                 Uri mImageUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
                 ContentResolver cr = MainActivity.this.getContentResolver();
-//                Cursor cursor = cr.query(mImageUri, null, MediaStore.Images.Media.MIME_TYPE + "=? or " + MediaStore.Images.Media.MIME_TYPE + "=?"
-//                        , new String[]{"image/jpeg", "image/png"}, MediaStore.Images.Media.DATE_MODIFIED);
+                Cursor cursor = cr.query(mImageUri, null, MediaStore.Images.Media.MIME_TYPE + "=? or " + MediaStore.Images.Media.MIME_TYPE + "=?"
+                        , new String[]{"image/jpeg", "image/png"}, MediaStore.Images.Media.DATE_MODIFIED);
                 // 只查询jpeg和png的图片
-                Cursor cursor = cr.query(mImageUri, null,
-                        MediaStore.Images.Media.MIME_TYPE + "=? or "
-                                + MediaStore.Images.Media.MIME_TYPE + "=?",
-                        new String[] { "image/jpeg", "image/png" },
-                        MediaStore.Images.Media.DATE_MODIFIED);
+//                Cursor cursor = cr.query(mImageUri, null,MediaStore.Images.Media.MIME_TYPE + "=? or "+ MediaStore.Images.Media.MIME_TYPE + "=?",
+//                        new String[] { "image/jpeg","image/png" },MediaStore.Images.Media.DATE_MODIFIED);
                 while (cursor.moveToNext()) {
                     String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
                     File parentFile = new File(path).getParentFile();
@@ -168,60 +158,5 @@ public class MainActivity extends AppCompatActivity {
         mDirName = (TextView) findViewById(R.id.id_tv_title);
         mDirCount = (TextView) findViewById(R.id.id_tv_count);
 
-    }
-
-    class ImageAdapter extends BaseAdapter {
-
-        private String mDirPahth;
-        private List<String> mImgPaths;
-        private LayoutInflater layoutInflater;
-
-        public ImageAdapter(Context context, List<String> datas, String dirPath) {
-            this.mDirPahth = dirPath;
-            this.mImgPaths = datas;
-            this.layoutInflater = LayoutInflater.from(context);
-        }
-
-        @Override
-        public int getCount() {
-            return mImgPaths.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return mImgPaths.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-
-            ViewHolder viewHolder = null;
-            if (convertView == null) {
-                convertView = layoutInflater.inflate(R.layout.item_girdview, parent, false);
-                viewHolder = new ViewHolder();
-                viewHolder.mImage = (ImageView) convertView.findViewById(R.id.id_item_image);
-                viewHolder.mSelect = (ImageButton) convertView.findViewById(R.id.id_item_select);
-                convertView.setTag(viewHolder);
-            } else {
-                viewHolder = (ViewHolder) convertView.getTag();
-            }
-            //重置状态
-            viewHolder.mImage.setImageResource(R.mipmap.pictures_no);
-            viewHolder.mSelect.setImageResource(R.mipmap.picture_unselected);
-
-            ImageLoader.getInstance(3, ImageLoader.Type.LIFO).loadImage(mDirPahth + "/" + mImgPaths.get(position), viewHolder.mImage);
-
-            return convertView;
-        }
-
-        class ViewHolder {
-            ImageView mImage;
-            ImageButton mSelect;
-        }
     }
 }
