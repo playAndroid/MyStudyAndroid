@@ -10,7 +10,11 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.GridView;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
 
     private ProgressDialog mProgressDialog;
 
+    private ListImagePathPopuWindow mImagePathPopuWindow;
+
     private static final int DATA_LOADED = 0x110;
 
     private Handler handler = new Handler() {
@@ -60,16 +66,33 @@ public class MainActivity extends AppCompatActivity {
                     mProgressDialog.dismiss();
                 }
                 data2View();
+                initImagePopupWindow();
+
             }
         }
     };
+
+    /**
+     * 初始化popupWindow
+     */
+    private void initImagePopupWindow() {
+        mImagePathPopuWindow = new ListImagePathPopuWindow(this, folderBeanList);
+        mImagePathPopuWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                lightOn();
+            }
+        });
+
+    }
+
 
     /**
      * 绑定数据到View
      */
     private void data2View() {
         if (mCurrentDir == null) {
-            Toast.makeText(this, "未扫毛到任何图片", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "未扫描到任何图片", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -90,7 +113,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initEven() {
+        mButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mImagePathPopuWindow.showAsDropDown(mButton, 0, 0);
+                lightOff();
+            }
+        });
+    }
 
+    /**
+     * 屏幕变暗
+     */
+    private void lightOff() {
+        WindowManager.LayoutParams lp = getWindow().getAttributes();
+        lp.alpha = .3f;
+        getWindow().setAttributes(lp);
+    }
+
+    private void lightOn() {
+        WindowManager.LayoutParams lp = getWindow().getAttributes();
+        lp.alpha = 1.0f;
+        getWindow().setAttributes(lp);
     }
 
     /**
