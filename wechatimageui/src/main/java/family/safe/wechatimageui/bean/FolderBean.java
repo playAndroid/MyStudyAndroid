@@ -4,6 +4,14 @@ package family.safe.wechatimageui.bean;
  * Created by Administrator on 2016/6/27.
  */
 public class FolderBean {
+
+    /**
+     * d当前文件夹路径
+     */
+    private String dir;
+    private String firstImgPath;
+    private String name;
+    private int count;
     public String getDir() {
         return dir;
     }
@@ -34,11 +42,5 @@ public class FolderBean {
         this.count = count;
     }
 
-    /**
-     * d当前文件夹路径
-     */
-    private String dir;
-    private String firstImgPath;
-    private String name;
-    private int count;
+
 }

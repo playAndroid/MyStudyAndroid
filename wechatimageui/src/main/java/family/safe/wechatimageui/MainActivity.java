@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -67,7 +68,6 @@ public class MainActivity extends AppCompatActivity {
                 }
                 data2View();
                 initImagePopupWindow();
-
             }
         }
     };
@@ -118,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 mImagePathPopuWindow.showAsDropDown(mButton, 0, 0);
                 lightOff();
+
             }
         });
     }
@@ -182,6 +183,7 @@ public class MainActivity extends AppCompatActivity {
                             return false;
                         }
                     }).length;
+                    Log.e("hlk", "picSize" + picSize);
                     folderBean.setCount(picSize);
                     if (picSize > mMaxCount) {
                         mMaxCount = picSize;

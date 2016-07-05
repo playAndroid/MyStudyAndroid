@@ -36,6 +36,8 @@ public class ListImagePathPopuWindow extends PopupWindow {
         mDatas = datas;
         mContentView = LayoutInflater.from(context).inflate(R.layout.popup_main, null);
         setContentView(mContentView);
+        setWidth(mWidth);
+        setHeight(mHeight);
         setFocusable(true);
         setTouchable(true);
         setOutsideTouchable(true);
@@ -87,6 +89,8 @@ public class ListImagePathPopuWindow extends PopupWindow {
             Log.e("hlk", "PopupWindow中数据的长短" + folderBeens.size());
         }
 
+//        getView
+
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder viewHolder = null;
@@ -95,7 +99,7 @@ public class ListImagePathPopuWindow extends PopupWindow {
                 viewHolder = new ViewHolder();
                 viewHolder.mDirName = (TextView) convertView.findViewById(R.id.id_tv_dir_name);
                 viewHolder.mImageView = (ImageView) convertView.findViewById(R.id.id_dir_item_image);
-                viewHolder.mDirCount = (TextView) convertView.findViewById(R.id.id_tv_count);
+                viewHolder.mDirCount = (TextView) convertView.findViewById(R.id.id_tv_dir_count);
                 convertView.setTag(viewHolder);
             } else {
                 viewHolder = (ViewHolder) convertView.getTag();
@@ -103,11 +107,9 @@ public class ListImagePathPopuWindow extends PopupWindow {
 
             viewHolder.mImageView.setImageResource(R.mipmap.pictures_no);
             FolderBean folderBean = getItem(position);
-            ImageLoader.getInstance(3, ImageLoader.Type.LIFO).loadImage(folderBean.getFirstImgPath(), viewHolder.mImageView);
+            ImageLoader.getInstance().loadImage(folderBean.getFirstImgPath(), viewHolder.mImageView);
             viewHolder.mDirName.setText(folderBean.getName());
             viewHolder.mDirCount.setText(folderBean.getCount() + "");
-            Log.e("hlk", "getName" + folderBean.getName());
-            Log.e("hlk", "getCount()" + folderBean.getCount());
 
             return convertView;
         }

@@ -119,7 +119,18 @@ public class ImageLoader {
         return null;
     }
 
-    public static ImageLoader getInstance(int threadCount, Type type) {
+    public static ImageLoader getInstance() {
+        if (mInstance == null) {
+            synchronized (ImageLoader.class) {
+                if (mInstance == null) {
+                    mInstance = new ImageLoader(1, Type.LIFO);
+                }
+            }
+        }
+        return mInstance;
+    }
+
+    public static ImageLoader getInstance(int threadCount,Type type) {
         if (mInstance == null) {
             synchronized (ImageLoader.class) {
                 if (mInstance == null) {
@@ -129,7 +140,10 @@ public class ImageLoader {
         }
         return mInstance;
     }
-
+//    private ImageLoader(int threadCount, Type type)
+//    {
+//        init(threadCount, type);
+//    }
     /**
      * 根据path 设置图片
      *
