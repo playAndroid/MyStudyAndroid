@@ -9,9 +9,19 @@ public class FolderBean {
      * d当前文件夹路径
      */
     private String dir;
+    /**
+     * 第一张图片路径
+     */
     private String firstImgPath;
+    /**
+     * 文件夹名称
+     */
     private String name;
+    /**
+     * 图片数量
+     */
     private int count;
+
     public String getDir() {
         return dir;
     }

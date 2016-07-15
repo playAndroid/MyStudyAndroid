@@ -10,6 +10,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -30,6 +31,16 @@ public class ListImagePathPopuWindow extends PopupWindow {
     private List<FolderBean> mDatas;
     private View mContentView;
     private ListView mListView;
+
+    public interface OnDirSelected {
+        void onDirSelected(FolderBean folderBean);
+    }
+
+    private OnDirSelected mDirSelected;
+
+    public void setOnDirSelected(OnDirSelected mDirSelected) {
+        this.mDirSelected = mDirSelected;
+    }
 
     public ListImagePathPopuWindow(Context context, List<FolderBean> datas) {
         calWidthAndHeight(context);
@@ -61,7 +72,14 @@ public class ListImagePathPopuWindow extends PopupWindow {
     }
 
     private void initEvent() {
-
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (mDirSelected != null) {
+                    mDirSelected.onDirSelected(mDatas.get(position));
+                }
+            }
+        });
     }
 
     private void initView(Context context) {

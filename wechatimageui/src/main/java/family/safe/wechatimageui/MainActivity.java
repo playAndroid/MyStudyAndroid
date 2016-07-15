@@ -83,6 +83,27 @@ public class MainActivity extends AppCompatActivity {
                 lightOn();
             }
         });
+        mImagePathPopuWindow.setOnDirSelected(new ListImagePathPopuWindow.OnDirSelected() {
+            @Override
+            public void onDirSelected(FolderBean folderBean) {
+                mCurrentDir = new File(folderBean.getDir());
+                mImages = Arrays.asList(mCurrentDir.list(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File dir, String filename) {
+                        if (filename.endsWith(".jpg") || filename.endsWith(".png") || filename.endsWith(".jpeg")) {
+                            return true;
+                        }
+                        return false;
+                    }
+                }));
+
+                imageAdapter = new ImageAdapter(MainActivity.this, mImages, mCurrentDir.getAbsolutePath());
+                mGridView.setAdapter(imageAdapter);
+                mDirCount.setText(mImages.size() + "");
+                mDirName.setText(mCurrentDir.getName());
+                mImagePathPopuWindow.dismiss();
+            }
+        });
 
     }
 
@@ -116,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mImagePathPopuWindow.setAnimationStyle(R.style.dir_popupwindow_anim);
                 mImagePathPopuWindow.showAsDropDown(mButton, 0, 0);
                 lightOff();
 
