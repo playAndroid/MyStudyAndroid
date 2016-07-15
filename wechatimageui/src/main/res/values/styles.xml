@@ -11,5 +11,6 @@
     <style name="dir_popupwindow_anim">
         <item name="android:windowEnterAnimation">@anim/popup_up</item>
         <item name="android:windowExitAnimation">@anim/popup_down</item>
+        <item name="android:duration">500</item>
     </style>
 </resources>

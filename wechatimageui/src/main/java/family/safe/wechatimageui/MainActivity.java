@@ -137,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 mImagePathPopuWindow.setAnimationStyle(R.style.dir_popupwindow_anim);
                 mImagePathPopuWindow.showAsDropDown(mButton, 0, 0);
                 lightOff();
