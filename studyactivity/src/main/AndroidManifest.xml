@@ -15,6 +15,27 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".LaunchModeActivityStudy"
+            android:allowTaskReparenting="true"
+            android:configChanges="screenLayout|orientation|keyboardHidden"
+            android:taskAffinity="ground.hao.com">
+            <intent-filter>
+                <action android:name="ground.hao.com" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".NormalActivityLife"
+            android:launchMode="singleInstance" >
+            <intent-filter>
+                <action android:name="com.ground.hao.a"/>
+                <action android:name="com.ground.hao.b"/>
+                <category android:name="com.ground.hao.c"/>
+                <category android:name="com.ground.hao.d"/>
+                <data android:mimeType="text/plain"/>
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
