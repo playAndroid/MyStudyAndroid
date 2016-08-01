@@ -7,6 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/badgeView/badgeView.iml" filepath="$PROJECT_DIR$/badgeView/badgeView.iml" />
       <module fileurl="file://$PROJECT_DIR$/myzoomimageview/myzoomimageview.iml" filepath="$PROJECT_DIR$/myzoomimageview/myzoomimageview.iml" />
       <module fileurl="file://$PROJECT_DIR$/studyactivity/studyactivity.iml" filepath="$PROJECT_DIR$/studyactivity/studyactivity.iml" />
+      <module fileurl="file://$PROJECT_DIR$/studyipcmechanism/studyipcmechanism.iml" filepath="$PROJECT_DIR$/studyipcmechanism/studyipcmechanism.iml" />
       <module fileurl="file://$PROJECT_DIR$/wechatimageui/wechatimageui.iml" filepath="$PROJECT_DIR$/wechatimageui/wechatimageui.iml" />
       <module fileurl="file://$PROJECT_DIR$/wechattabandui/wechattabandui.iml" filepath="$PROJECT_DIR$/wechattabandui/wechattabandui.iml" />
     </modules>
